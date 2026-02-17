@@ -5,6 +5,7 @@ main() {
     local SCRIPT_DIR
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     local DRY_RUN=false
+    local AUTO_YES=false
 
     if [[ "${1:-}" == "--dry-run" ]]; then
         DRY_RUN=true
@@ -13,145 +14,11 @@ main() {
     fi
 
     # -------------------------------------------------------------------------
-    # Helpers
+    # Load shared helpers
     # -------------------------------------------------------------------------
-
-    # Detect the real home directory, handling Git Bash path mangling.
-    # Git Bash maps C:\Users\leole to /c/Users/leole but Claude encodes from
-    # the Windows path C:\Users\leole, so we need the native form.
-    detect_home() {
-        case "$(uname -s)" in
-            MINGW*|MSYS*|CYGWIN*)
-                # Convert /c/Users/leole -> C:/Users/leole
-                local drive="${HOME:1:1}"               # 'c'
-                drive="$(echo "$drive" | tr '[:lower:]' '[:upper:]')" # 'C'
-                echo "${drive}:${HOME:2}"               # C:/Users/leole
-                ;;
-            *)
-                echo "$HOME"
-                ;;
-        esac
-    }
-
-    local REAL_HOME
-    REAL_HOME="$(detect_home)"
-
-    local CLAUDE_DIR="$HOME/.claude"
-
-    # Encode a path the same way Claude does:
-    # Replace : / \ with -, then strip leading -
-    encode_path() {
-        local p="$1"
-        p="${p//://- }"  # dummy -- sed below does the real work
-        echo "$1" | sed 's/[:\\/]/-/g; s/^-//'
-    }
-
-    local ENCODED_HOME
-    ENCODED_HOME="$(encode_path "$REAL_HOME")"
-
-    # Greedy filesystem-matching decoder.
-    # Takes an encoded project dir name like
-    #   C--Users-leole-Documents-code-disqt-discord-bot
-    # strips the encoded home prefix, then resolves hyphen-ambiguous segments
-    # by greedily matching the longest directory name on disk.
-    decode_project_dir() {
-        local encoded="$1"
-
-        # Strip encoded home prefix (+ trailing -)
-        local remainder="${encoded#"${ENCODED_HOME}"}"
-        remainder="${remainder#-}"
-
-        if [[ -z "$remainder" ]]; then
-            echo ""
-            return
-        fi
-
-        # Split on -
-        IFS='-' read -ra parts <<< "$remainder"
-        local n=${#parts[@]}
-        local resolved=""
-        local base="$REAL_HOME"
-        local i=0
-
-        while (( i < n )); do
-            local matched=false
-
-            # Try longest possible match first (greedy)
-            local j=$n
-            while (( j > i )); do
-                local candidate=""
-                local k=$i
-                while (( k < j )); do
-                    if [[ -z "$candidate" ]]; then
-                        candidate="${parts[$k]}"
-                    else
-                        candidate="${candidate}-${parts[$k]}"
-                    fi
-                    (( k++ ))
-                done
-
-                local test_path="$base/$candidate"
-                if [[ -d "$test_path" || -f "$test_path" ]]; then
-                    if [[ -z "$resolved" ]]; then
-                        resolved="$candidate"
-                    else
-                        resolved="$resolved/$candidate"
-                    fi
-                    base="$test_path"
-                    i=$j
-                    matched=true
-                    break
-                fi
-                (( j-- ))
-            done
-
-            if ! $matched; then
-                # No filesystem match; treat single segment as-is
-                local seg="${parts[$i]}"
-                if [[ -z "$resolved" ]]; then
-                    resolved="$seg"
-                else
-                    resolved="$resolved/$seg"
-                fi
-                base="$base/$seg"
-                (( i++ ))
-            fi
-        done
-
-        echo "$resolved"
-    }
-
-    # Dry-run-aware copy (single file)
-    safe_cp() {
-        local src="$1"
-        local dst="$2"
-        if $DRY_RUN; then
-            echo "  [copy] $src -> $dst"
-        else
-            mkdir -p "$(dirname "$dst")"
-            cp "$src" "$dst"
-        fi
-    }
-
-    # Dry-run-aware recursive copy (directory contents via glob)
-    safe_cp_r() {
-        local src_dir="$1"
-        local dst_dir="$2"
-        local pattern="${3:-*}"
-
-        if $DRY_RUN; then
-            for f in "$src_dir"/$pattern; do
-                [[ -e "$f" ]] || continue
-                echo "  [copy] $f -> $dst_dir/$(basename "$f")"
-            done
-        else
-            mkdir -p "$dst_dir"
-            for f in "$src_dir"/$pattern; do
-                [[ -e "$f" ]] || continue
-                cp "$f" "$dst_dir/$(basename "$f")"
-            done
-        fi
-    }
+    # shellcheck source=lib.sh
+    source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+    init_paths
 
     # -------------------------------------------------------------------------
     # Clean previous export
@@ -305,13 +172,7 @@ main() {
                 actual_dir="$REAL_HOME/$rel_path"
             fi
             # On Git Bash, convert REAL_HOME (C:/Users/...) back to unix path
-            case "$(uname -s)" in
-                MINGW*|MSYS*|CYGWIN*)
-                    local drive_letter="${actual_dir:0:1}"
-                    drive_letter="$(echo "$drive_letter" | tr '[:upper:]' '[:lower:]')"
-                    actual_dir="/${drive_letter}${actual_dir:2}"
-                    ;;
-            esac
+            actual_dir="$(to_unix_path "$actual_dir")"
 
             if [[ -d "$actual_dir" ]]; then
                 # Root CLAUDE.md

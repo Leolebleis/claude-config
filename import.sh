@@ -30,98 +30,11 @@ main() {
     fi
 
     # -------------------------------------------------------------------------
-    # Helpers (duplicated from export.sh -- will refactor to lib.sh later)
+    # Load shared helpers
     # -------------------------------------------------------------------------
-
-    # Detect the real home directory, handling Git Bash path mangling.
-    detect_home() {
-        case "$(uname -s)" in
-            MINGW*|MSYS*|CYGWIN*)
-                # Convert /c/Users/leole -> C:/Users/leole
-                local drive="${HOME:1:1}"
-                drive="$(echo "$drive" | tr '[:lower:]' '[:upper:]')"
-                echo "${drive}:${HOME:2}"
-                ;;
-            *)
-                echo "$HOME"
-                ;;
-        esac
-    }
-
-    local REAL_HOME
-    REAL_HOME="$(detect_home)"
-
-    local CLAUDE_DIR="$HOME/.claude"
-
-    # Encode a path the same way Claude does:
-    # Replace : / \ with -, then strip leading -
-    encode_path() {
-        echo "$1" | sed 's/[:\\/]/-/g; s/^-//'
-    }
-
-    # Dry-run-aware copy (single file)
-    safe_cp() {
-        local src="$1"
-        local dst="$2"
-        if $DRY_RUN; then
-            echo "  [copy] $src -> $dst"
-        else
-            mkdir -p "$(dirname "$dst")"
-            cp "$src" "$dst"
-        fi
-    }
-
-    # Dry-run-aware recursive directory copy (contents of src_dir into dst_dir)
-    safe_cp_r() {
-        local src_dir="$1"
-        local dst_dir="$2"
-        if $DRY_RUN; then
-            # Walk recursively to show all files
-            while IFS= read -r -d '' f; do
-                local rel="${f#"$src_dir"/}"
-                echo "  [copy] $f -> $dst_dir/$rel"
-            done < <(find "$src_dir" -type f -print0)
-        else
-            mkdir -p "$dst_dir"
-            cp -r "$src_dir"/. "$dst_dir/"
-        fi
-    }
-
-    # Prompt for confirmation. Returns 0 if yes.
-    # If --yes flag is set, always returns 0.
-    confirm() {
-        local msg="$1"
-        if $AUTO_YES; then
-            echo "  $msg [auto-yes]"
-            return 0
-        fi
-        if $DRY_RUN; then
-            # In dry-run mode, assume yes for display purposes
-            return 0
-        fi
-        printf "  %s [y/N] " "$msg"
-        local answer
-        read -r answer
-        case "$answer" in
-            [yY]|[yY][eE][sS]) return 0 ;;
-            *) return 1 ;;
-        esac
-    }
-
-    # Convert REAL_HOME (C:/Users/leole) back to unix path for filesystem ops
-    to_unix_path() {
-        local p="$1"
-        case "$(uname -s)" in
-            MINGW*|MSYS*|CYGWIN*)
-                local drive_letter="${p:0:1}"
-                drive_letter="$(echo "$drive_letter" | tr '[:upper:]' '[:lower:]')"
-                echo "/${drive_letter}${p:2}"
-                ;;
-            *)
-                echo "$p"
-                ;;
-        esac
-    }
+    # shellcheck source=lib.sh
+    source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+    init_paths
 
     # -------------------------------------------------------------------------
     # Counters
