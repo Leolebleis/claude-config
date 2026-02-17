@@ -1,0 +1,65 @@
+{
+  "version": 2,
+  "plugins": {
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\leole\\.claude\\plugins\\cache\\claude-plugins-official\\superpowers\\4.3.0",
+        "version": "4.3.0",
+        "installedAt": "2026-02-02T11:07:05.584Z",
+        "lastUpdated": "2026-02-12T21:09:14.343Z",
+        "gitCommitSha": "06b92f36820f38175b2ed6ff3f8df45157d54731"
+      }
+    ],
+    "gopls-lsp@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\leole\\.claude\\plugins\\cache\\claude-plugins-official\\gopls-lsp\\1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-02-02T13:43:10.428Z",
+        "lastUpdated": "2026-02-02T13:43:10.428Z",
+        "gitCommitSha": "27d2b86d72da27c64585150857cee8472ad47abb"
+      }
+    ],
+    "frontend-design@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\leole\\.claude\\plugins\\cache\\claude-plugins-official\\frontend-design\\2cd88e7947b7",
+        "version": "2cd88e7947b7",
+        "installedAt": "2026-02-13T20:56:26.586Z",
+        "lastUpdated": "2026-02-13T20:56:26.586Z",
+        "gitCommitSha": "2cd88e7947b7382e045666abee790c7f55f669f3"
+      }
+    ],
+    "commit-commands@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\leole\\.claude\\plugins\\cache\\claude-plugins-official\\commit-commands\\2cd88e7947b7",
+        "version": "2cd88e7947b7",
+        "installedAt": "2026-02-13T20:56:56.090Z",
+        "lastUpdated": "2026-02-13T20:56:56.090Z",
+        "gitCommitSha": "2cd88e7947b7382e045666abee790c7f55f669f3"
+      }
+    ],
+    "playground@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\leole\\.claude\\plugins\\cache\\claude-plugins-official\\playground\\2cd88e7947b7",
+        "version": "2cd88e7947b7",
+        "installedAt": "2026-02-13T20:57:44.702Z",
+        "lastUpdated": "2026-02-13T20:57:44.702Z",
+        "gitCommitSha": "2cd88e7947b7382e045666abee790c7f55f669f3"
+      }
+    ],
+    "playwright-skill@playwright-skill": [
+      {
+        "scope": "user",
+        "installPath": "C:\\Users\\leole\\.claude\\plugins\\cache\\playwright-skill\\playwright-skill\\4.1.0",
+        "version": "4.1.0",
+        "installedAt": "2026-02-14T12:06:44.798Z",
+        "lastUpdated": "2026-02-14T12:06:44.798Z",
+        "gitCommitSha": "bb7e920d376022958214e349ef25498a2644e189"
+      }
+    ]
+  }
+}
