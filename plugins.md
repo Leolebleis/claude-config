@@ -1,6 +1,15 @@
 # Recommended Plugins
 
-Install these on any new machine:
+## Marketplaces
+
+Add these first:
+
+```bash
+claude plugin marketplace add https://github.com/anthropics/claude-plugins-official
+claude plugin marketplace add https://github.com/lackeyjb/playwright-skill
+```
+
+## Plugins
 
 ```bash
 claude plugin install superpowers@claude-plugins-official
