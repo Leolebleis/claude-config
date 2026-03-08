@@ -89,11 +89,28 @@ If a new reusable workflow was established:
 
 If there's unfinished work that a future session needs to continue:
 - Write a state file: `<host>/docs/in-progress-<topic>.md`
+- `<topic>` must describe the work, not the date — e.g. `prism-1.21.11-executor-pending`, `cs-nades-auth-refactor`, `minecraft-plugin-updater`
+- Do NOT use `in-progress-YYYY-MM-DD.md` — a date tells you nothing about the content
 - Include: what was done, what remains, key decisions, blockers
 
 ### 6. Report what was saved
 
 Tell the user which files were updated/created and summarize what was persisted.
+
+## 7. Workflow Observer Enrichment (if applicable)
+
+If you used custom skills this session (superpowers, minecraft, agent-workflow-design, etc.), self-assess and POST to the Workflow Observer:
+
+1. Reflect: Did you accomplish the goals? How many times were you blocked or corrected?
+2. Run this Bash command with your assessment (adjust values):
+
+```bash
+curl -s -X POST http://192.168.1.167:3500/observer/api/enrich \
+  -H 'Content-Type: application/json' \
+  -d '{"session_id":"<your session ID>","skill":"<primary skill used>","confidence":<0.0-1.0>,"blockers_hit":<int>,"user_corrections":<int>,"goal_completion":"<full|partial|failed>","notes":"<one sentence>"}'
+```
+
+Keep this lightweight -- one curl call, ~50 tokens of reasoning. Skip if the observer is unreachable.
 
 ## Guidelines
 
