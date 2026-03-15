@@ -7,6 +7,8 @@ Personal Claude Code plugin marketplace (`Leolebleis/claude-config`).
 ```
 .claude-plugin/marketplace.json   # Plugin metadata + version
 skills/<name>/SKILL.md            # One directory per skill
+hooks/                            # SessionStart hooks (context injection)
+md-hygiene.md                     # MD hygiene skills reference (injected at session start)
 README.md                         # Public-facing install instructions
 ```
 
@@ -17,6 +19,10 @@ README.md                         # Public-facing install instructions
 | french-writing | Auto-invoked for French text. Accents, contractions, tone. |
 | precompact | Pre-compaction context preservation + Workflow Observer enrichment. |
 | observer-setup | OTEL telemetry setup for new machines. |
+
+## Hooks
+
+The plugin injects MD hygiene guidance at session start via a `SessionStart` hook. This reminds Claude to suggest relevant MD management skills at natural checkpoints (end of session, first time in a repo, etc.). See `md-hygiene.md` for the full reference.
 
 ## Rules
 
