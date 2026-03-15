@@ -22,7 +22,7 @@ escape_for_json() {
 }
 
 md_hygiene_escaped=$(escape_for_json "$md_hygiene_content")
-session_context="You have MD hygiene skills available.\n\n**At natural checkpoints, consider suggesting the appropriate skill from the guide below. Never auto-invoke precompact.**\n\n${md_hygiene_escaped}"
+session_context="**At natural checkpoints, suggest the appropriate skill from the guide below. Never auto-invoke precompact.**\n\n${md_hygiene_escaped}"
 
 # Output context injection as JSON
 if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
