@@ -152,14 +152,46 @@ The `03` prefix means disabled. `02` means enabled.
 
 ## High Swap / Page File Usage
 
-**Detection:** Compare `FreePhysicalMemory` with `TotalVisibleMemorySize` from `wmic OS`. Check `Win32_PageFileUsage` for current and peak swap usage. Swap > 1 GB active during gaming = problem.
+**Detection:** Compare `FreePhysicalMemory` with `TotalVisibleMemorySize` from `wmic OS`. Check `Win32_PageFileUsage` for current and peak swap usage. Swap > 1 GB active during gaming = problem. Also check WHERE the page file lives — `Get-CimInstance Win32_PageFileUsage | Select-Object Name` — and how much free space that drive has.
 
-**Impact:** Varies — Causes random hitches when pages swap to/from disk. Especially bad if page file is on HDD.
+**Impact:** Varies — Causes random hitches when pages swap to/from disk. Especially bad if page file is on a drive with low free space (can't grow) or on an HDD. A page file on a nearly-full drive can cause multi-second freezes when Windows can't allocate swap fast enough.
 
 **Fixes:**
-1. Reduce memory pressure (disable bloat, reduce game settings)
-2. Ensure page file is on SSD, not HDD
+1. Move page file to the drive with the most free space (if it's on a cramped OS drive)
+2. Reduce memory pressure (disable bloat, reduce game settings)
 3. Long-term: RAM upgrade
+
+**Moving the page file via PowerShell (requires admin):**
+```powershell
+# Save as .ps1 and run with: gsudo powershell -ExecutionPolicy Bypass -File script.ps1
+
+# Disable automatic management
+$cs = Get-CimInstance Win32_ComputerSystem
+$cs | Set-CimInstance -Property @{AutomaticManagedPagefile = $false}
+
+# Remove page file from old drive
+$pf = Get-CimInstance -Query "SELECT * FROM Win32_PageFileSetting WHERE Name = 'C:\\pagefile.sys'"
+if ($pf) { $pf | Remove-CimInstance }
+
+# Create on new drive (must create first, then set size separately)
+New-CimInstance -ClassName Win32_PageFileSetting -Property @{Name = 'D:\pagefile.sys'}
+$pf = Get-CimInstance -Query "SELECT * FROM Win32_PageFileSetting WHERE Name = 'D:\\pagefile.sys'"
+$pf | Set-CimInstance -Property @{InitialSize = [uint32]8192; MaximumSize = [uint32]8192}
+```
+
+**Sizing:** For 16 GB RAM: 8 GB page file. For 32 GB RAM: 8 GB. Fixed size (min=max) is better on SSDs — avoids constant resize writes.
+
+**Verify:** `Get-CimInstance Win32_PageFileSetting | Format-List Name, InitialSize, MaximumSize`
+
+**Reboot required** for changes to take effect.
+
+**Rollback:**
+```powershell
+# Re-enable automatic management
+$cs = Get-CimInstance Win32_ComputerSystem
+$cs | Set-CimInstance -Property @{AutomaticManagedPagefile = $true}
+# Reboot — Windows recreates system-managed page file
+```
 
 ---
 

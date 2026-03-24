@@ -47,8 +47,9 @@ Run all diagnostic groups **in parallel** — they're independent reads. Parse t
 # Available power plans
 "powercfg /list"
 
-# Page file config
+# Page file — location, size, usage (check which drive it's on + free space on that drive)
 "powershell -Command \"Get-CimInstance Win32_PageFileUsage | Select-Object Name, AllocatedBaseSize, CurrentUsage, PeakUsage | Format-List\""
+"powershell -Command \"Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' | Select-Object PagingFiles | Format-List\""
 
 # CPU clock + load snapshot
 "wmic cpu get CurrentClockSpeed,LoadPercentage /format:list"
