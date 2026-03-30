@@ -8,10 +8,6 @@ Personal Claude Code plugin with shared skills and MCP servers.
 claude plugin install Leolebleis/claude-config
 ```
 
-## MCP Servers
-
-- **google-tasks** -- Google Tasks API (list, create, complete, update, search). Reads OAuth credentials from gcloud ADC. Requires one-time setup: enable Tasks API in GCP, create OAuth client, run `gcloud auth application-default login` with Tasks scope.
-
 ## Skills
 
 - **french-writing** -- Auto-invoked when writing French text. Accent rules, contractions, gaming terms, tone guidelines.

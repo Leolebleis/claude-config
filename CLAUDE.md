@@ -6,8 +6,6 @@ Personal Claude Code plugin marketplace (`Leolebleis/claude-config`).
 
 ```
 .claude-plugin/marketplace.json   # Plugin metadata + version
-.mcp.json                         # MCP server definitions (auto-loaded)
-mcp-servers/                      # Wrapper scripts for MCP servers
 skills/<name>/SKILL.md            # One directory per skill
 hooks/                            # SessionStart hooks (context injection)
 md-hygiene.md                     # Session guidance (injected at session start via hook)
@@ -24,11 +22,11 @@ README.md                         # Public-facing install instructions
 | pc-performance-audit | Remote Windows PC performance audit via SSH. |
 | google-tasks | Manage Google Tasks -- list, create, complete, update, search. |
 
-## MCP Servers
+## MCP Servers (configured locally per machine, not in plugin)
 
 | Server | Purpose |
 |--------|---------|
-| google-tasks | Google Tasks API via `@brandcast_app/google-tasks-mcp`. Reads OAuth credentials from gcloud ADC (`~/.config/gcloud/application_default_credentials.json`). |
+| google_workspace_tasks | Google Tasks via `workspace-mcp` (taylorwilsdon/google_workspace_mcp). Config in `~/.claude/settings.json` with OAuth creds. |
 
 ## Hooks
 
