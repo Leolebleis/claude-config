@@ -3,6 +3,13 @@
   "lines": [
     [
       {
+        "id": "b2edebca-f981-4ede-b163-b5b17f6ab413",
+        "type": "custom-command",
+        "backgroundColor": "bgBrightMagenta",
+        "commandPath": "hostname",
+        "preserveColors": false
+      },
+      {
         "id": "ece53711-4dc6-432e-b55f-79e6bac60f11",
         "type": "total-speed",
         "backgroundColor": "bgBrightBlack",
@@ -58,13 +65,6 @@
     ],
     [
       {
-        "id": "6abfb2ca-4c32-4b9b-b0c9-4c6431291ba4",
-        "type": "custom-command",
-        "backgroundColor": "bgBlue",
-        "commandPath": "hostname",
-        "preserveColors": false
-      },
-      {
         "id": "0773fc3e-a6cc-4850-88a2-d03de4f4c018",
         "type": "context-length",
         "backgroundColor": "bgMagenta",
@@ -74,12 +74,12 @@
         "id": "a1d5a275-e849-463d-b818-707b23f40ce5",
         "type": "skills",
         "backgroundColor": "bgBrightCyan",
+        "rawValue": true,
         "metadata": {
           "mode": "list",
           "listLimit": "5",
           "hideWhenEmpty": "true"
-        },
-        "rawValue": true
+        }
       }
     ]
   ],
