@@ -17,6 +17,7 @@ README.md                         # Public-facing install instructions
 | french-writing | Auto-invoked for French text. Accents, contractions, tone. |
 | google-tasks | Manage Google Tasks -- list, create, complete, update, search. |
 | pc-performance-audit | Remote Windows PC performance audit via SSH. |
+| solved-problem | Prior-art research before building custom. Parallel subagents across GitHub/Reddit/HN/awesome-lists/blogs, ranked tools with pros/cons, recommendation. |
 
 ## MCP Servers (configured locally per machine, not in plugin)
 
